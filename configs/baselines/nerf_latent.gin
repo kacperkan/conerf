@@ -1,0 +1,144 @@
+include 'configs/defaults.gin'
+
+image_scale = 4
+batch_size = 512
+eval_batch_size = 4096
+
+max_steps = 250000
+lr_decay_steps = 500000
+lr_delay_steps = 10000
+init_lr = 1e-3
+final_lr = 1e-4
+TrainConfig.lr_schedule = %DEFAULT_LR_SCHEDULE
+
+# Dataset config.
+ExperimentConfig.datasource_cls = @InterpDataSource
+InterpDataSource.data_dir = %data_dir
+InterpDataSource.image_scale = %image_scale
+InterpDataSource.interval = 2
+
+# Basic model config.
+NerfModel.num_coarse_samples = 128
+NerfModel.num_fine_samples = 128
+NerfModel.use_viewdirs = True
+NerfModel.use_stratified_sampling = True
+NerfModel.use_projected_hyper_as_warp = False
+
+NerfModel.norm_type = 'none'
+NerfModel.activation = @jax.nn.relu
+
+NerfModel.use_posenc_identity = True
+SE3Field.use_posenc_identity = True
+
+spatial_point_min_deg = 0
+spatial_point_max_deg = 8
+NERF_EASE_ALPHA_SCHEDULE = {
+  'type': 'linear',
+  'initial_value': 6.0,
+  'final_value': %spatial_point_max_deg,
+  'num_steps': 80000,
+}
+
+
+# Hyper config.
+hyper_point_min_deg = 0
+hyper_point_max_deg = 1
+NerfModel.hyper_point_min_deg = %hyper_point_min_deg
+NerfModel.hyper_point_max_deg = %hyper_point_max_deg
+TrainConfig.hyper_alpha_schedule = {
+  'type': 'piecewise',
+  'schedules': [
+    (1000, ('constant', 0.0)),
+    (0, ('linear', 0.0, %hyper_point_max_deg, 10000))
+  ],
+}
+
+warp/GLOEmbed.num_dims = 128
+hyper/GLOEmbed.num_dims = 128
+
+NerfModel.use_attribute_conditioning = False
+NerfModel.use_masking = False
+
+# Hyper part
+NerfModel.hyper_slice_method = 'axis_aligned_plane'
+NerfModel.hyper_sheet_mlp_cls = @HyperSheetMLP
+NerfModel.hyper_use_warp_embed = False
+hyper_sheet_min_deg = 0
+hyper_sheet_max_deg = 6
+HyperSheetMLP.min_deg = %hyper_sheet_min_deg
+HyperSheetMLP.max_deg = %hyper_sheet_max_deg
+HyperSheetMLP.output_channels = %hyper_num_dims
+TrainConfig.hyper_sheet_alpha_schedule = ('constant', %hyper_sheet_max_deg)
+
+NerfModel.decorrelate_hyper_dims = False
+HyperSheetMLP.decorrelate_hyper_dims = False
+
+# Attribute part
+NerfModel.attribute_sheet_mlp_cls = @DummyAttributeSheet
+
+
+NerfModel.use_warp = False
+warp_min_deg = 0
+warp_max_deg = 6
+TrainConfig.warp_alpha_schedule = {
+  'type': 'linear',
+  'initial_value': %warp_min_deg,
+  'final_value': %warp_max_deg,
+  'num_steps': 80000,
+}
+
+TrainConfig.use_weight_norm = False
+TrainConfig.use_background_loss = False
+TrainConfig.background_loss_weight = 1.0
+
+
+elastic_init_weight = 0.001
+TrainConfig.use_elastic_loss = False
+TrainConfig.elastic_reduce_method = 'weight'
+TrainConfig.elastic_loss_weight_schedule = {
+  'type': 'constant',
+  'value': %elastic_init_weight,
+}
+
+TrainConfig.use_warp_reg_loss = False
+TrainConfig.warp_reg_loss_weight = 0.001
+TrainConfig.use_hyper_reg_loss = False
+TrainConfig.hyper_reg_loss_weight = 0.0001
+
+
+TrainConfig.masking_gamma_schedule = { 
+  'type': 'constant',
+  'value': 0.0,
+}
+
+TrainConfig.use_attribute_loss = False
+TrainConfig.attribute_loss_weight = 0.1
+
+TrainConfig.use_attribute_mask_loss = False
+TrainConfig.mask_loss_weight = 0.01
+
+NerfModel.mask_noise_std = 0.001
+TrainConfig.use_attribute_mask_laplacian_loss = False
+TrainConfig.mask_laplacian_weight = 0.0001
+
+TrainConfig.use_latent_l2_reg = True
+TrainConfig.latent_l2_reg_weight = 0.0001
+
+TrainConfig.use_weight_l2_reg = False
+TrainConfig.weight_l2_reg_weight = 0.00001
+
+TrainConfig.samples_with_attribute_ratio = 0.0
+
+TrainConfig.use_depth_loss = False
+TrainConfig.depth_loss_weight = 1e-3
+
+TrainConfig.print_every = 10
+TrainConfig.log_every = 100
+TrainConfig.histogram_every = 100
+TrainConfig.save_every = 1000
+
+EvalConfig.eval_once = False
+EvalConfig.save_output = False
+EvalConfig.save_images_to_tensorboard = False
+EvalConfig.num_train_eval = None
+EvalConfig.num_val_eval = None

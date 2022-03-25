@@ -1,0 +1,4 @@
+[flake8]
+ignore = E203,W503,E731  # to be consistent with `black`
+max-line-length = 79
+indent-size = 4
