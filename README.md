@@ -11,7 +11,7 @@ This is the official implementation for "CoNeRF: Controllable Neural Radiance Fi
 * [Video](https://conerf.github.io/showcase.mp4)
 
 The codebase is based on [HyperNeRF](https://github.com/google/hypernerf)
-implemente in [JAX](https://github.com/google/jax), building on
+implemented in [JAX](https://github.com/google/jax), building on
 [JaxNeRF](https://github.com/google-research/google-research/tree/master/jaxnerf).
 
 
