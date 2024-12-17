@@ -2,7 +2,6 @@
 [![arXiv](https://img.shields.io/badge/arXiv-2112.01983-red.svg)](https://arxiv.org/abs/2112.01983)
 [![MIT license](https://img.shields.io/badge/license-Apache%20v2.0-white.svg)](https://github.com/kacperkan/conerf/blob/main/LICENSE)
 [![Website](https://img.shields.io/badge/website-up-yellow.svg)](https://conerf.github.io/)
-[![Datasets](https://img.shields.io/badge/datasets-zip-green.svg)](http://cvlab.ii.pw.edu.pl:9000/conerf-dataset/datasets.zip)
 
 This is the official implementation for "CoNeRF: Controllable Neural Radiance Fields" 
 
@@ -13,6 +12,10 @@ This is the official implementation for "CoNeRF: Controllable Neural Radiance Fi
 The codebase is based on [HyperNeRF](https://github.com/google/hypernerf)
 implemented in [JAX](https://github.com/google/jax), building on
 [JaxNeRF](https://github.com/google-research/google-research/tree/master/jaxnerf).
+
+## Dataset [update 17 Dec 2024]
+
+Please send an email to kacp.kania(at)gmail.com  with the request to access the data. The previous link has been taken down due to the security concerns. 
 
 
 ## Setup
